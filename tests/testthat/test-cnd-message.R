@@ -320,3 +320,12 @@ test_that("parent errors prints with bullets in all cases", {
     (expect_error(f(FALSE)))
   })
 })
+
+test_that("can print message with prefix", {
+  foo <- error_cnd("foo", message = "Foo")
+  bar <- error_cnd("bar", message = "Bar", parent = foo)
+  expect_snapshot({
+    writeLines(cnd_message(foo, prefix = TRUE))
+    writeLines(cnd_message(bar, prefix = TRUE))
+  })
+})
