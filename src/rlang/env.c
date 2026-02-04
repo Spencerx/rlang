@@ -65,21 +65,20 @@ r_obj* r_env_clone(r_obj* env, r_obj* parent) {
 }
 
 void r_env_coalesce(r_obj* env, r_obj* from) {
-  r_obj* nms = KEEP(r_env_names(from));
-  r_obj* types = KEEP(r_env_binding_types(from, nms));
+  r_obj* syms = KEEP(r_env_syms(from));
+  r_obj* types = KEEP(r_env_binding_types(from, syms));
 
   if (types == r_null) {
-    env_coalesce_plain(env, from, nms);
+    env_coalesce_plain(env, from, syms);
     FREE(2);
     return;
   }
 
-  r_ssize n = r_length(nms);
-  r_obj* const * v_nms = r_chr_cbegin(nms);
+  r_ssize n = r_length(syms);
   enum r_env_binding_type* v_types = (enum r_env_binding_type*) r_int_begin(types);
 
   for (r_ssize i = 0; i < n; ++i) {
-    r_obj* sym = r_str_as_symbol(v_nms[i]);
+    r_obj* sym = r_list_get(syms, i);
 
     if (r_env_has(env, sym)) {
       continue;
@@ -126,12 +125,11 @@ void r_env_coalesce(r_obj* env, r_obj* from) {
 }
 
 static
-void env_coalesce_plain(r_obj* env, r_obj* from, r_obj* nms) {
-  r_ssize n = r_length(nms);
-  r_obj* const * v_nms = r_chr_cbegin(nms);
+void env_coalesce_plain(r_obj* env, r_obj* from, r_obj* syms) {
+  r_ssize n = r_length(syms);
 
   for (r_ssize i = 0; i < n; ++i) {
-    r_obj* sym = r_str_as_symbol(v_nms[i]);
+    r_obj* sym = r_list_get(syms, i);
 
     if (r_env_has(env, sym)) {
       continue;

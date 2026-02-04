@@ -100,6 +100,22 @@ r_obj* r_env_binding_types(r_obj* env, r_obj* bindings) {
   return types;
 }
 
+// This does an extra alloc, see https://bugs.r-project.org/show_bug.cgi?id=18928#c2
+r_obj* r_env_syms(r_obj* env) {
+  r_obj* nms = KEEP(r_env_names(env));
+  r_ssize n = r_length(nms);
+
+  r_obj* out = KEEP(r_alloc_list(n));
+  r_obj* const * v_nms = r_chr_cbegin(nms);
+
+  for (r_ssize i = 0; i < n; ++i) {
+    r_list_poke(out, i, r_str_as_symbol(v_nms[i]));
+  }
+
+  FREE(2);
+  return out;
+}
+
 
 // Binding type API
 // Implements future R API from https://bugs.r-project.org/show_bug.cgi?id=18928

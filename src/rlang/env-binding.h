@@ -20,6 +20,8 @@ bool r_env_binding_is_promise(r_obj* env, r_obj* sym);
 bool r_env_binding_is_active(r_obj* env, r_obj* sym);
 r_obj* r_env_binding_types(r_obj* env, r_obj* bindings);
 
+r_obj* r_env_syms(r_obj* env);
+
 // Binding constructors
 static inline
 void r_env_bind(r_obj* env, r_obj* sym, r_obj* value) {
