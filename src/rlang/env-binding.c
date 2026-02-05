@@ -6,13 +6,6 @@
 #define RLANG_HAS_R_BINDING_API 0
 
 
-bool r_env_binding_is_promise(r_obj* env, r_obj* sym) {
-  return r_env_binding_type(env, sym) == R_ENV_BINDING_TYPE_delayed;
-}
-bool r_env_binding_is_active(r_obj* env, r_obj* sym) {
-  return R_BindingIsActive(sym, env);
-}
-
 static r_obj* new_binding_types(r_ssize n) {
   r_obj* types = r_alloc_integer(n);
 
