@@ -264,6 +264,9 @@ r_obj* r_env_binding_forced_expr(r_obj* env, r_obj* sym) {
 }
 
 r_obj* r_env_binding_forced_value(r_obj* env, r_obj* sym) {
+#if RLANG_HAS_R_BINDING_API
+  return R_ForcedBindingValue(sym, env);
+#else
   r_obj* value = r_env_find(env, sym);
 
   if (r_typeof(value) != R_TYPE_promise) {
@@ -274,6 +277,7 @@ r_obj* r_env_binding_forced_value(r_obj* env, r_obj* sym) {
   }
 
   return PRVALUE(value);
+#endif
 }
 
 
