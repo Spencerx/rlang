@@ -62,7 +62,8 @@ r_obj* r_env_get(r_obj* env, r_obj* sym) {
   }
 
   // Handles value, delayed, forced, and active bindings
-  return R_getVar(sym, env, FALSE);
+  // `R_getVar()` only available on R < 4.5.0
+  return Rf_eval(sym, env);
 }
 
 r_obj* r_env_until(r_obj* env, r_obj* sym, r_obj* last);
