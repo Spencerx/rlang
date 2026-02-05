@@ -635,8 +635,7 @@ env_binding_are_active <- function(env, nms = NULL) {
 #' @rdname env_binding_are_active
 #' @export
 env_binding_are_lazy <- function(env, nms = NULL) {
-  # Match both delayed (3L) and forced (4L) promises
-  env_binding_are_type(env, nms, c(3L, 4L))
+  env_binding_are_type(env, nms, 3L)
 }
 env_binding_are_type <- function(env, nms, type, error_call = caller_env()) {
   check_environment(env, call = error_call)

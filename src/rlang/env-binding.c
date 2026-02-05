@@ -23,19 +23,7 @@ static r_obj* new_binding_types(r_ssize n) {
   return types;
 }
 
-static enum r_env_binding_type which_env_binding(r_obj* env, r_obj* sym) {
-  if (r_env_binding_is_active(env, sym)) {
-    // Check for active bindings first, since promise detection triggers
-    // active bindings through `r_env_find()` (#1376)
-    return R_ENV_BINDING_TYPE_active;
-  }
 
-  if (r_env_binding_is_promise(env, sym)) {
-    return R_ENV_BINDING_TYPE_delayed;
-  }
-
-  return R_ENV_BINDING_TYPE_value;
-}
 
 static inline r_obj* binding_as_sym(bool list, r_obj* bindings, r_ssize i) {
   if (list) {
@@ -58,7 +46,8 @@ static r_ssize detect_special_binding(r_obj* env,
 
   for (r_ssize i = 0; i < n; ++i) {
     r_obj* sym = binding_as_sym(symbols, bindings, i);
-    if (which_env_binding(env, sym)) {
+    enum r_env_binding_type type = r_env_binding_type(env, sym);
+    if (type == R_ENV_BINDING_TYPE_active || type == R_ENV_BINDING_TYPE_delayed) {
       return i;
     }
   }
@@ -86,11 +75,17 @@ r_obj* r_env_binding_types(r_obj* env, r_obj* bindings) {
 
   r_ssize n = r_length(bindings);
   r_obj* types = KEEP(new_binding_types(n));
-  int* types_ptr = r_int_begin(types) + i;
+  int* types_ptr = r_int_begin(types);
+
+  // Fill value type for bindings before first special binding
+  for (r_ssize j = 0; j < i; ++j) {
+    *types_ptr = R_ENV_BINDING_TYPE_value;
+    ++types_ptr;
+  }
 
   while (i < n) {
     r_obj* sym = binding_as_sym(symbols, bindings, i);
-    *types_ptr = which_env_binding(env, sym);
+    *types_ptr = r_env_binding_type(env, sym);
 
     ++i;
     ++types_ptr;
