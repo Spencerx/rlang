@@ -5,6 +5,12 @@
 // https://bugs.r-project.org/show_bug.cgi?id=18928
 #define RLANG_HAS_R_BINDING_API 0
 
+#if !RLANG_HAS_R_BINDING_API
+static inline r_obj* env_find(r_obj* env, r_obj* sym) {
+  return Rf_findVarInFrame3(env, sym, FALSE);
+}
+#endif
+
 
 static r_obj* new_binding_types(r_ssize n) {
   r_obj* types = r_alloc_integer(n);
@@ -124,7 +130,7 @@ enum r_env_binding_type r_env_binding_type(r_obj* env, r_obj* sym) {
     return R_ENV_BINDING_TYPE_active;
   }
 
-  r_obj* value = r_env_find(env, sym);
+  r_obj* value = env_find(env, sym);
 
   if (value == r_syms.unbound) {
     return R_ENV_BINDING_TYPE_unbound;
@@ -179,7 +185,7 @@ void r_env_bind_forced(r_obj* env, r_obj* sym, r_obj* expr, r_obj* value) {
   // Create a delayed binding and force it manually.
   r_env_bind_delayed(env, sym, expr, r_envs.empty);
 
-  r_obj* promise = r_env_find(env, sym);
+  r_obj* promise = env_find(env, sym);
   SET_PRVALUE(promise, value);
   SET_PRENV(promise, r_null);
 #endif
@@ -200,7 +206,7 @@ r_obj* r_env_binding_delayed_expr(r_obj* env, r_obj* sym) {
 #if RLANG_HAS_R_BINDING_API
   return R_DelayedBindingExpression(sym, env);
 #else
-  r_obj* value = r_env_find(env, sym);
+  r_obj* value = env_find(env, sym);
 
   if (r_typeof(value) != R_TYPE_promise) {
     r_abort("Not a promise binding.");
@@ -217,7 +223,7 @@ r_obj* r_env_binding_delayed_env(r_obj* env, r_obj* sym) {
 #if RLANG_HAS_R_BINDING_API
   return R_DelayedBindingEnvironment(sym, env);
 #else
-  r_obj* value = r_env_find(env, sym);
+  r_obj* value = env_find(env, sym);
 
   if (r_typeof(value) != R_TYPE_promise) {
     r_abort("Not a promise binding.");
@@ -237,7 +243,7 @@ r_obj* r_env_binding_forced_expr(r_obj* env, r_obj* sym) {
 #if RLANG_HAS_R_BINDING_API
   return R_ForcedBindingExpression(sym, env);
 #else
-  r_obj* value = r_env_find(env, sym);
+  r_obj* value = env_find(env, sym);
 
   if (r_typeof(value) != R_TYPE_promise) {
     r_abort("Not a promise binding.");
@@ -249,6 +255,8 @@ r_obj* r_env_binding_forced_expr(r_obj* env, r_obj* sym) {
   return R_PromiseExpr(value);
 #endif
 }
+
+// Use `r_env_get()` to get the value of a forced binding
 
 
 // Active binding accessors

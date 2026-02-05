@@ -90,7 +90,7 @@ void r_env_coalesce(r_obj* env, r_obj* from) {
       break;
 
     case R_ENV_BINDING_TYPE_value:
-      r_env_bind(env, sym, r_env_find(from, sym));
+      r_env_bind(env, sym, r_env_get(from, sym));
       break;
 
     case R_ENV_BINDING_TYPE_delayed:
@@ -137,7 +137,7 @@ void env_coalesce_plain(r_obj* env, r_obj* from, r_obj* syms) {
       continue;
     }
 
-    r_env_bind(env, sym, r_env_find(from, sym));
+    r_env_bind(env, sym, r_env_get(from, sym));
   }
 
   return;
@@ -191,34 +191,41 @@ bool r_env_inherits(r_obj* env, r_obj* ancestor, r_obj* top) {
   return env == ancestor;
 }
 
-static
-r_obj* env_until(r_obj* env, r_obj* sym, r_obj* last) {
+r_obj* r_env_until(r_obj* env, r_obj* sym, r_obj* last) {
   r_obj* stop = r_envs.empty;
   if (last != r_envs.empty) {
     stop = r_env_parent(last);
   }
 
   while (true) {
-    if (env == r_envs.empty || r_env_has(env, sym)) {
+    if (env == r_envs.empty) {
+      return r_envs.empty;
+    }
+    if (r_env_has(env, sym)) {
       return env;
     }
 
     r_obj* next = r_env_parent(env);
     if (next == r_envs.empty || next == stop) {
-      return env;
+      return r_envs.empty;
     }
 
     env = next;
   }
 }
 
+r_obj* r_env_get_anywhere(r_obj* env, r_obj* sym) {
+  env = r_env_until(env, sym, r_envs.empty);
+  return r_env_get(env, sym);
+}
+
 r_obj* r_env_get_until(r_obj* env, r_obj* sym, r_obj* last) {
-  env = env_until(env, sym, last);
+  env = r_env_until(env, sym, last);
   return r_env_get(env, sym);
 }
 
 bool r_env_has_until(r_obj* env, r_obj* sym, r_obj* last) {
-  env = env_until(env, sym, last);
+  env = r_env_until(env, sym, last);
   return r_env_has(env, sym);
 }
 
