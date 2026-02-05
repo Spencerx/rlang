@@ -137,8 +137,8 @@ r_obj* eval_fn_dots(r_obj* fn, r_obj* x, r_obj* dots, r_obj* env) {
   // `.x` is the first input, x
   // `.fn` is the function, fn
   // The dots are a pairlist already in the call
-  r_env_poke(env, r_syms.dot_x, x);
-  r_env_poke(env, r_syms.dot_fn, fn);
+  r_env_bind(env, r_syms.dot_x, x);
+  r_env_bind(env, r_syms.dot_fn, fn);
 
   r_obj* out = r_eval(call, env);
 
@@ -148,13 +148,13 @@ r_obj* eval_fn_dots(r_obj* fn, r_obj* x, r_obj* dots, r_obj* env) {
 
 static inline
 r_obj* eval_as_character(r_obj* x, r_obj* env) {
-  r_env_poke(env, r_syms.dot_x, x);
+  r_env_bind(env, r_syms.dot_x, x);
   return r_eval(as_character_call, env);
 }
 
 static inline
 r_obj* names_dispatch(r_obj* x, r_obj* env) {
-  r_env_poke(env, r_syms.dot_x, x);
+  r_env_bind(env, r_syms.dot_x, x);
   return r_eval(names_call, env);
 }
 
@@ -163,14 +163,14 @@ r_obj* names_dispatch(r_obj* x, r_obj* env) {
 // attributes using ALTREP wrappers, which is not in R's public API.
 static inline
 r_obj* set_names_dispatch(r_obj* x, r_obj* nm, r_obj* env) {
-  r_env_poke(env, r_syms.dot_x, x);
-  r_env_poke(env, r_syms.dot_y, nm);
+  r_env_bind(env, r_syms.dot_x, x);
+  r_env_bind(env, r_syms.dot_y, nm);
   return r_eval(set_names_call, env);
 }
 
 static inline
 r_ssize length_dispatch(r_obj* x, r_obj* env) {
-  r_env_poke(env, r_syms.dot_x, x);
+  r_env_bind(env, r_syms.dot_x, x);
   r_obj* n = KEEP(r_eval(length_call, env));
 
   if (r_length(n) != 1) {

@@ -1000,6 +1000,15 @@ r_obj* ffi_list_poke(r_obj* x, r_obj* i, r_obj* value) {
 
 // walk.c
 
+r_obj* ffi_has_private_accessors(void) {
+#ifdef RLANG_USE_PRIVATE_ACCESSORS
+  return r_true;
+#else
+  return r_false;
+#endif
+}
+
+#ifdef RLANG_USE_PRIVATE_ACCESSORS
 static inline
 r_obj* protect_missing(r_obj* x) {
   // FIXME: Include in `exec_` functions?
@@ -1011,16 +1020,6 @@ r_obj* protect_missing(r_obj* x) {
     return x;
   }
 }
-
-r_obj* ffi_has_private_accessors(void) {
-#ifdef RLANG_USE_PRIVATE_ACCESSORS
-  return r_true;
-#else
-  return r_false;
-#endif
-}
-
-#ifdef RLANG_USE_PRIVATE_ACCESSORS
 
 // [[ register() ]]
 r_obj* ffi_sexp_iterate(r_obj* x, r_obj* fn) {
