@@ -265,7 +265,7 @@ r_obj* ffi_env_bind(r_obj* env,
       r_env_unbind(env, sym);
     } else {
       switch (c_bind_type) {
-      case BIND_TYPE_value: r_env_poke(env, sym, value); break;
+      case BIND_TYPE_value: r_env_bind(env, sym, value); break;
       case BIND_TYPE_lazy: env_poke_delayed(env, sym, value, eval_env); break;
       case BIND_TYPE_active: env_poke_active(env, sym, value, eval_env); break;
       }
@@ -302,7 +302,7 @@ void env_poke_or_zap(r_obj* env, r_obj* sym, r_obj* value) {
   if (value == rlang_zap) {
     r_env_unbind(env, sym);
   } else {
-    r_env_poke(env, sym, value);
+    r_env_bind(env, sym, value);
   }
 }
 static

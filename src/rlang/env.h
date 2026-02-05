@@ -162,12 +162,6 @@ r_obj* r_env_clone(r_obj* env, r_obj* parent);
 void r_env_coalesce(r_obj* env, r_obj* from);
 
 
-// Silently ignores bindings that are not defined in `env`.
-static inline
-void r_env_unbind(r_obj* env, r_obj* sym) {
-  R_removeVarFromFrame(sym, env);
-}
-
 bool r_env_inherits(r_obj* env, r_obj* ancestor, r_obj* top);
 
 
