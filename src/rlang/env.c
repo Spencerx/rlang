@@ -75,10 +75,11 @@ void r_env_coalesce(r_obj* env, r_obj* from) {
   }
 
   r_ssize n = r_length(syms);
+  r_obj* const * v_syms = r_list_cbegin(syms);
   enum r_env_binding_type* v_types = (enum r_env_binding_type*) r_int_begin(types);
 
   for (r_ssize i = 0; i < n; ++i) {
-    r_obj* sym = r_list_get(syms, i);
+    r_obj* sym = v_syms[i];
 
     if (r_env_has(env, sym)) {
       continue;
@@ -127,9 +128,10 @@ void r_env_coalesce(r_obj* env, r_obj* from) {
 static
 void env_coalesce_plain(r_obj* env, r_obj* from, r_obj* syms) {
   r_ssize n = r_length(syms);
+  r_obj* const * v_syms = r_list_cbegin(syms);
 
   for (r_ssize i = 0; i < n; ++i) {
-    r_obj* sym = r_list_get(syms, i);
+    r_obj* sym = v_syms[i];
 
     if (r_env_has(env, sym)) {
       continue;
