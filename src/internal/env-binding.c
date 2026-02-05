@@ -145,7 +145,7 @@ r_obj* ffi_env_has(r_obj* env, r_obj* nms, r_obj* inherit) {
 }
 
 static void env_poke_or_zap(r_obj* env, r_obj* sym, r_obj* value);
-static void env_poke_lazy(r_obj* env, r_obj* sym, r_obj* value, r_obj* eval_env);
+static void env_poke_delayed(r_obj* env, r_obj* sym, r_obj* value, r_obj* eval_env);
 static void env_poke_active(r_obj* env, r_obj* sym, r_obj* fn, r_obj* eval_env);
 static r_obj* env_get(r_obj* env, r_obj* sym);
 
@@ -266,7 +266,7 @@ r_obj* ffi_env_bind(r_obj* env,
     } else {
       switch (c_bind_type) {
       case BIND_TYPE_value: r_env_poke(env, sym, value); break;
-      case BIND_TYPE_lazy: env_poke_lazy(env, sym, value, eval_env); break;
+      case BIND_TYPE_lazy: env_poke_delayed(env, sym, value, eval_env); break;
       case BIND_TYPE_active: env_poke_active(env, sym, value, eval_env); break;
       }
     }
@@ -306,7 +306,7 @@ void env_poke_or_zap(r_obj* env, r_obj* sym, r_obj* value) {
   }
 }
 static
-void env_poke_lazy(r_obj* env, r_obj* sym, r_obj* expr, r_obj* eval_env) {
+void env_poke_delayed(r_obj* env, r_obj* sym, r_obj* expr, r_obj* eval_env) {
   if (is_quosure(expr)) {
     expr = KEEP(rlang_as_function(expr, eval_env));
     expr = r_new_call(expr, r_null);
