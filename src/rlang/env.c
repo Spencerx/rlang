@@ -107,7 +107,7 @@ void r_env_coalesce(r_obj* env, r_obj* from) {
         env,
         sym,
         r_env_binding_forced_expr(from, sym),
-        r_env_binding_forced_value(from, sym)
+        r_env_get(from, sym)
       );
       break;
 

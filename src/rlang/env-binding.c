@@ -250,23 +250,6 @@ r_obj* r_env_binding_forced_expr(r_obj* env, r_obj* sym) {
 #endif
 }
 
-r_obj* r_env_binding_forced_value(r_obj* env, r_obj* sym) {
-#if RLANG_HAS_R_BINDING_API
-  return R_ForcedBindingValue(sym, env);
-#else
-  r_obj* value = r_env_find(env, sym);
-
-  if (r_typeof(value) != R_TYPE_promise) {
-    r_abort("Not a promise binding.");
-  }
-  if (PRVALUE(value) == r_syms.unbound) {
-    r_abort("Not a forced binding.");
-  }
-
-  return PRVALUE(value);
-#endif
-}
-
 
 // Active binding accessors
 
