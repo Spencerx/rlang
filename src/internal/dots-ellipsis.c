@@ -1,12 +1,16 @@
 #include "rlang.h"
 
+// FIXME: Should implement on top of new dots API
+static inline r_obj* env_find(r_obj* env, r_obj* sym) {
+  return Rf_findVarInFrame3(env, sym, FALSE);
+}
+
 static
 r_obj* ffi_ellipsis_find_dots(r_obj* env) {
   if (r_typeof(env) != R_TYPE_environment) {
     r_abort("`env` is a not an environment.");
   }
 
-  // `r_env_get()` triggers missing argument errors
   if (r_env_has_missing(env, r_syms.dots)) {
     return r_syms.missing;
   }
@@ -15,7 +19,7 @@ r_obj* ffi_ellipsis_find_dots(r_obj* env) {
     r_abort("No `...` found.");
   }
 
-  return r_env_get(env, r_syms.dots);
+  return env_find(env, r_syms.dots);
 }
 
 r_obj* ffi_ellipsis_dots(r_obj* env) {
