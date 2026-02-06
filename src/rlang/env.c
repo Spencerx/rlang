@@ -90,25 +90,28 @@ void r_env_coalesce(r_obj* env, r_obj* from) {
       break;
 
     case R_ENV_BINDING_TYPE_value:
-      r_env_bind(env, sym, r_env_get(from, sym));
+      r_env_bind(env, sym, KEEP(r_env_get(from, sym)));
+      FREE(1);
       break;
 
     case R_ENV_BINDING_TYPE_delayed:
       r_env_bind_delayed(
         env,
         sym,
-        r_env_binding_delayed_expr(from, sym),
-        r_env_binding_delayed_env(from, sym)
+        KEEP(r_env_binding_delayed_expr(from, sym)),
+        KEEP(r_env_binding_delayed_env(from, sym))
       );
+      FREE(2);
       break;
 
     case R_ENV_BINDING_TYPE_forced:
       r_env_bind_forced(
         env,
         sym,
-        r_env_binding_forced_expr(from, sym),
-        r_env_get(from, sym)
+        KEEP(r_env_binding_forced_expr(from, sym)),
+        KEEP(r_env_get(from, sym))
       );
+      FREE(2);
       break;
 
     case R_ENV_BINDING_TYPE_missing:
@@ -116,7 +119,8 @@ void r_env_coalesce(r_obj* env, r_obj* from) {
       break;
 
     case R_ENV_BINDING_TYPE_active:
-      r_env_bind_active(env, sym, r_env_binding_active_fn(from, sym));
+      r_env_bind_active(env, sym, KEEP(r_env_binding_active_fn(from, sym)));
+      FREE(1);
       break;
     }
   }
@@ -137,7 +141,8 @@ void env_coalesce_plain(r_obj* env, r_obj* from, r_obj* syms) {
       continue;
     }
 
-    r_env_bind(env, sym, r_env_get(from, sym));
+    r_env_bind(env, sym, KEEP(r_env_get(from, sym)));
+    FREE(1);
   }
 
   return;
