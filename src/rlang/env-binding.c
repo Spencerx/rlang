@@ -166,14 +166,12 @@ void r_env_bind_delayed(r_obj* env, r_obj* sym, r_obj* expr, r_obj* eval_env) {
 #if RLANG_HAS_R_BINDING_API
   R_MakeDelayedBinding(sym, expr, eval_env, env);
 #else
-  KEEP(expr);
-  r_obj* name = KEEP(r_sym_as_utf8_character(sym));
-
-  r_node_poke_car(bind_delayed_value_node, expr);
-  r_eval_with_xyz(bind_delayed_call, name, env, eval_env, rlang_ns_env);
-  r_node_poke_car(bind_delayed_value_node, r_null);
-
-  FREE(2);
+  r_obj* promise = KEEP(Rf_allocSExp(PROMSXP));
+  SET_PRCODE(promise, expr);
+  SET_PRENV(promise, eval_env);
+  SET_PRVALUE(promise, r_syms.unbound);
+  Rf_defineVar(sym, promise, env);
+  FREE(1);
 #endif
 }
 
@@ -181,13 +179,12 @@ void r_env_bind_forced(r_obj* env, r_obj* sym, r_obj* expr, r_obj* value) {
 #if RLANG_HAS_R_BINDING_API
   R_MakeForcedBinding(sym, expr, value, env);
 #else
-  // Creating an evaluated promise requires internal R API (`R_mkEVPROMISE`).
-  // Create a delayed binding and force it manually.
-  r_env_bind_delayed(env, sym, expr, r_envs.empty);
-
-  r_obj* promise = env_find(env, sym);
-  SET_PRVALUE(promise, value);
+  r_obj* promise = KEEP(Rf_allocSExp(PROMSXP));
+  SET_PRCODE(promise, expr);
   SET_PRENV(promise, r_null);
+  SET_PRVALUE(promise, value);
+  Rf_defineVar(sym, promise, env);
+  FREE(1);
 #endif
 }
 
@@ -263,12 +260,4 @@ r_obj* r_env_binding_forced_expr(r_obj* env, r_obj* sym) {
 
 r_obj* r_env_binding_active_fn(r_obj* env, r_obj* sym) {
   return R_ActiveBindingFunction(sym, env);
-}
-
-
-void r_init_library_env_binding(void) {
-  bind_delayed_call = r_parse("delayedAssign(x, value = NULL, assign.env = y, eval.env = z)");
-  r_preserve(bind_delayed_call);
-
-  bind_delayed_value_node = r_node_cddr(bind_delayed_call);
 }
