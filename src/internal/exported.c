@@ -725,56 +725,6 @@ r_obj* ffi_obj_address(r_obj* x) {
   return r_str_as_character(r_obj_address(x));
 }
 
-
-r_obj* rlang_get_promise(r_obj* x, r_obj* env) {
-  switch (r_typeof(x)) {
-  case R_TYPE_promise:
-    return x;
-  case R_TYPE_character:
-    if (r_length(x) == 1) {
-      x = r_sym(r_chr_get_c_string(x, 0));
-    } else {
-      goto error;
-    }
-    // fallthrough
-  case R_TYPE_symbol: {
-    r_obj* prom = r_env_find_anywhere(env, x);
-    if (r_typeof(prom) == R_TYPE_promise) {
-      return prom;
-    }
-    // fallthrough
-  }
-  error:
-  default:
-    r_abort("`x` must be or refer to a local promise");
-  }
-}
-
-r_obj* ffi_promise_expr(r_obj* x, r_obj* env) {
-  r_obj* prom = rlang_get_promise(x, env);
-  return PREXPR(prom);
-}
-r_obj* ffi_promise_env(r_obj* x, r_obj* env) {
-  r_obj* prom = rlang_get_promise(x, env);
-  return PRENV(prom);
-}
-r_obj* ffi_promise_value(r_obj* x, r_obj* env) {
-  r_obj* prom = rlang_get_promise(x, env);
-  r_obj* value = PRVALUE(prom);
-  if (value == r_syms.unbound) {
-    return r_sym("R_UnboundValue");
-  } else {
-    return value;
-  }
-}
-
-r_obj* ffi_find_var(r_obj* env, r_obj* sym) {
-  return Rf_findVar(sym, env);
-}
-r_obj* ffi_find_var_in_frame(r_obj* env, r_obj* sym) {
-  return Rf_findVarInFrame(env, sym);
-}
-
 r_obj* ffi_chr_get(r_obj* x, r_obj* i) {
   if (r_typeof(i) != R_TYPE_integer || r_length(i) != 1) {
     r_abort("`i` must be an integer value.");

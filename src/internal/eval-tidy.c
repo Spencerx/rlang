@@ -25,14 +25,17 @@ static struct rlang_mask_info mask_info(r_obj* mask) {
   }
 
   r_obj* flag;
+  r_obj* where;
 
-  flag = r_env_find_anywhere(mask, data_mask_flag_sym);
-  if (flag != r_syms.unbound) {
+  where = r_env_until(mask, data_mask_flag_sym, r_envs.empty);
+  if (where != r_envs.empty) {
+    flag = r_env_get(where, data_mask_flag_sym);
     return (struct rlang_mask_info) { flag, RLANG_MASK_DATA };
   }
 
-  flag = r_env_find_anywhere(mask, quo_mask_flag_sym);
-  if (flag != r_syms.unbound) {
+  where = r_env_until(mask, quo_mask_flag_sym, r_envs.empty);
+  if (where != r_envs.empty) {
+    flag = r_env_get(where, quo_mask_flag_sym);
     return (struct rlang_mask_info) { flag, RLANG_MASK_QUOSURE };
   }
 
@@ -63,11 +66,11 @@ static r_obj* rlang_new_ctxt_pronoun(r_obj* top) {
 }
 
 void poke_ctxt_env(r_obj* mask, r_obj* env) {
-  r_obj* ctxt_pronoun = r_env_find(mask, data_mask_env_sym);
-
-  if (ctxt_pronoun == r_syms.unbound) {
+  if (!r_env_has(mask, data_mask_env_sym)) {
     r_abort("Internal error: Can't find context pronoun in data mask");
   }
+
+  r_obj* ctxt_pronoun = r_env_get(mask, data_mask_env_sym);
 
   r_env_poke_parent(ctxt_pronoun, env);
 }
@@ -204,7 +207,11 @@ static r_obj* mask_find(r_obj* env, r_obj* sym) {
     r_abort("Internal error: Data pronoun must be subset with a symbol");
   }
 
-  r_obj* top_env = r_env_find(env, data_mask_top_env_sym);
+  r_obj* top_env =
+    r_env_has(env, data_mask_top_env_sym) ?
+    r_env_get(env, data_mask_top_env_sym) :
+    r_null;
+
   if (r_typeof(top_env) == R_TYPE_environment) {
     // Start lookup in the parent if the pronoun wraps a data mask
     env = r_env_parent(env);
@@ -218,16 +225,9 @@ static r_obj* mask_find(r_obj* env, r_obj* sym) {
 
   r_obj* cur = env;
   do {
-    r_obj* obj = r_env_find(cur, sym);
-    if (r_typeof(obj) == R_TYPE_promise) {
-      KEEP(obj);
-      obj = r_eval(obj, r_envs.empty);
-      FREE(1);
-    }
-
-    if (obj != r_syms.unbound) {
+    if (r_env_has(cur, sym)) {
       FREE(n_kept);
-      return obj;
+      return r_env_get(cur, sym);
     }
 
     if (cur == top_env) {
@@ -380,11 +380,12 @@ static r_obj* base_tilde_eval(r_obj* tilde, r_obj* quo_env) {
 }
 
 r_obj* env_get_top_binding(r_obj* mask) {
-  r_obj* top = r_env_find(mask, data_mask_top_env_sym);
-
-  if (top == r_syms.unbound) {
+  if (!r_env_has(mask, data_mask_top_env_sym)) {
     r_abort("Internal error: Can't find .top pronoun in data mask");
   }
+
+  r_obj* top = r_env_get(mask, data_mask_top_env_sym);
+
   if (r_typeof(top) != R_TYPE_environment) {
     r_abort("Internal error: Unexpected .top pronoun type");
   }
