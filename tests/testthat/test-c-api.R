@@ -40,6 +40,11 @@ test_that("r_base_ns_get() fail if object does not exist", {
   expect_error(.Call(ffi_test_base_ns_get, "foobar"))
 })
 
+test_that("r_env_get() retrieves `...` bindings", {
+  fn <- function(...) typeof(.Call(ffi_test_r_env_get, environment(), "..."))
+  expect_equal(fn(1, 2, 3), "...")
+})
+
 test_that("r_peek_frame() returns current frame", {
   current_frame <- function() {
     list(.Call(ffi_test_current_frame), environment())

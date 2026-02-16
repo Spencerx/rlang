@@ -125,6 +125,10 @@ r_obj* ffi_test_base_ns_get(r_obj* name) {
   return r_base_ns_get(r_chr_get_c_string(name, 0));
 }
 
+r_obj* ffi_test_r_env_get(r_obj* env, r_obj* name) {
+  return r_env_get(env, r_str_as_symbol(r_chr_get(name, 0)));
+}
+
 
 // formula.c
 

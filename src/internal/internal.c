@@ -296,6 +296,7 @@ static const R_CallMethodDef r_callables[] = {
   {"ffi_test_Rf_warningcall",          (DL_FUNC) &ffi_test_Rf_warningcall, 2},
   {"ffi_test_attrib_set",              (DL_FUNC) &r_attrib_set, 3},
   {"ffi_test_base_ns_get",             (DL_FUNC) &ffi_test_base_ns_get, 1},
+  {"ffi_test_r_env_get",               (DL_FUNC) &ffi_test_r_env_get, 2},
   {"ffi_test_chr_append",              (DL_FUNC) &chr_append, 2},
   {"ffi_test_chr_prepend",             (DL_FUNC) &chr_prepend, 2},
   {"ffi_test_current_frame",           (DL_FUNC) &r_peek_frame, 0},
