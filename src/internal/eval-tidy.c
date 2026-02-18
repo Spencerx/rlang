@@ -70,9 +70,9 @@ void poke_ctxt_env(r_obj* mask, r_obj* env) {
     r_abort("Internal error: Can't find context pronoun in data mask");
   }
 
-  r_obj* ctxt_pronoun = r_env_get(mask, data_mask_env_sym);
-
+  r_obj* ctxt_pronoun = KEEP(r_env_get(mask, data_mask_env_sym));
   r_env_poke_parent(ctxt_pronoun, env);
+  FREE(1);
 }
 
 
