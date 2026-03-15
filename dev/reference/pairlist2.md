@@ -25,16 +25,16 @@ pairlist2(...)
 new_function(pairlist2(x = 1, y = 3 * 6), quote(x * y))
 #> function (x = 1, y = 18) 
 #> x * y
-#> <environment: 0x5619376f89b8>
+#> <environment: 0x557e7abcbae8>
 new_function(exprs(x = 1, y = 3 * 6), quote(x * y))
 #> function (x = 1, y = 3 * 6) 
 #> x * y
-#> <environment: 0x5619376f89b8>
+#> <environment: 0x557e7abcbae8>
 
 # It preserves missing arguments, which is useful for creating
 # parameters without defaults:
 new_function(pairlist2(x = , y = 3 * 6), quote(x * y))
 #> function (x, y = 18) 
 #> x * y
-#> <environment: 0x5619376f89b8>
+#> <environment: 0x557e7abcbae8>
 ```

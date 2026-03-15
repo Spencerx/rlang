@@ -144,7 +144,7 @@ f <- function(arg) {
 f(1 + 1)
 #> <quosure>
 #> expr: ^1 + 1
-#> env:  0x561930a33f60
+#> env:  0x557e77edefb8
 
 # `enquos()` works with arguments and dots. It returns a list of
 # expressions
@@ -158,12 +158,12 @@ f(1 + 1, 2 * 10)
 #> [[1]]
 #> <quosure>
 #> expr: ^1 + 1
-#> env:  0x561930a33f60
+#> env:  0x557e77edefb8
 #> 
 #> [[2]]
 #> <quosure>
 #> expr: ^2 * 10
-#> env:  0x561930a33f60
+#> env:  0x557e77edefb8
 #> 
 
 
@@ -178,7 +178,7 @@ g(100)
 #> [[1]]
 #> <quosure>
 #> expr: ^(^100) * 2
-#> env:  0x561934bc37e0
+#> env:  0x557e79d82d80
 #> 
 
 column <- sym("cyl")
@@ -188,6 +188,6 @@ g(!!column)
 #> [[1]]
 #> <quosure>
 #> expr: ^(^cyl) * 2
-#> env:  0x56193749f6f8
+#> env:  0x557e77494848
 #> 
 ```
