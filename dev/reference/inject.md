@@ -54,7 +54,7 @@ lhs <- sym("foo")
 rhs <- sym("bar")
 inject(!!lhs ~ !!rhs + 10)
 #> foo ~ bar + 10
-#> <environment: 0x557e7ab0b6f0>
+#> <environment: 0x56301a166bb8>
 
 # Injection with `!!!` splices lists of arguments in function
 # calls:
