@@ -27,11 +27,11 @@ is_copyable(x)
 # they are not copied, the attributes are changed in place:
 env <- env()
 structure(env, foo = "bar")
-#> <environment: 0x55b99fc41690>
+#> <environment: 0x55d46094dcf0>
 #> attr(,"foo")
 #> [1] "bar"
 env
-#> <environment: 0x55b99fc41690>
+#> <environment: 0x55d46094dcf0>
 #> attr(,"foo")
 #> [1] "bar"
 
