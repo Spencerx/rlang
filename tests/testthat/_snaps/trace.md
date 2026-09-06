@@ -819,14 +819,14 @@
       summary(trace0)
     Output
            x
-        1. \-rlang (local) f(0) at test-trace.R:425:3
-        2.   +-base::identity(identity(g(n))) at test-trace.R:421:8
+        1. \-rlang (local) f(0) at test-trace.R:407:3
+        2.   +-base::identity(identity(g(n))) at test-trace.R:403:8
         3.   +-base::identity(g(n))
         4.   \-rlang (local) g(n)
-        5.     +-base::identity(identity(h(n))) at test-trace.R:422:8
+        5.     +-base::identity(identity(h(n))) at test-trace.R:404:8
         6.     +-base::identity(h(n))
         7.     \-rlang (local) h(n)
-        8.       +-base::identity(identity(trace_back(e, bottom = n))) at test-trace.R:423:8
+        8.       +-base::identity(identity(trace_back(e, bottom = n))) at test-trace.R:405:8
         9.       +-base::identity(trace_back(e, bottom = n))
        10.       \-rlang::trace_back(e, bottom = n)
     Code
@@ -839,11 +839,11 @@
       summary(trace1)
     Output
           x
-       1. \-rlang (local) f(1) at test-trace.R:426:3
-       2.   +-base::identity(identity(g(n))) at test-trace.R:421:8
+       1. \-rlang (local) f(1) at test-trace.R:408:3
+       2.   +-base::identity(identity(g(n))) at test-trace.R:403:8
        3.   +-base::identity(g(n))
        4.   \-rlang (local) g(n)
-       5.     +-base::identity(identity(h(n))) at test-trace.R:422:8
+       5.     +-base::identity(identity(h(n))) at test-trace.R:404:8
        6.     +-base::identity(h(n))
        7.     \-rlang (local) h(n)
     Code
@@ -856,8 +856,8 @@
       summary(trace2)
     Output
           x
-       1. \-rlang (local) f(2) at test-trace.R:427:3
-       2.   +-base::identity(identity(g(n))) at test-trace.R:421:8
+       1. \-rlang (local) f(2) at test-trace.R:409:3
+       2.   +-base::identity(identity(g(n))) at test-trace.R:403:8
        3.   +-base::identity(g(n))
        4.   \-rlang (local) g(n)
     Code
@@ -870,7 +870,7 @@
       summary(trace3)
     Output
           x
-       1. \-rlang (local) f(3) at test-trace.R:428:3
+       1. \-rlang (local) f(3) at test-trace.R:410:3
 
 # caught error does not display backtrace in knitted files
 

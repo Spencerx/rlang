@@ -382,24 +382,6 @@ test_that("summary.rlang_trace() prints the full tree", {
   expect_snapshot(summary(trace, srcrefs = FALSE))
 })
 
-test_that("unexported functions have `:::` prefix", {
-  expect_true(TRUE)
-  return("no longer using the rlanglibtest")
-
-  # Should be installed as part of the C API tests
-  skip_if_not_installed("rlanglibtest")
-  test_trace_unexported_child <- env_get(
-    ns_env("rlanglibtest"),
-    "test_trace_unexported_child"
-  )
-
-  e <- current_env()
-  f <- function() test_trace_unexported_child(e)
-  trace <- f()
-
-  expect_snapshot_trace(trace)
-})
-
 test_that("global functions have `global::` prefix", {
   f <- eval_bare(expr(function(e) rlang::trace_back(e)), global_env())
   g <- function(e) f(e)
