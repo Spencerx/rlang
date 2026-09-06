@@ -165,7 +165,7 @@ style_dim_soft <- function(x) {
   if (!has_ansi()) {
     return(x)
   }
-  if (cli::num_ansi_colors() >= 256) {
+  if (cli::num_ansi_colors() >= 256 && is_installed("crayon")) {
     crayon::make_style(grDevices::grey(0.6), colors = 256)(x)
   } else {
     col_silver(x)
