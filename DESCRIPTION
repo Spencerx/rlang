@@ -19,6 +19,7 @@ BugReports: https://github.com/r-lib/rlang/issues
 Depends:
     R (>= 4.0.0)
 Imports:
+    stats,
     utils
 Suggests:
     cli (>= 3.1.0),
@@ -33,7 +34,6 @@ Suggests:
     pillar,
     pkgload,
     rmarkdown,
-    stats,
     testthat (>= 3.3.2),
     tibble,
     usethis,
